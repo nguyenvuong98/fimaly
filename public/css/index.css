@@ -1,0 +1,17 @@
+.m-table {
+    border-collapse: collapse;
+}
+.m-table tr td {
+    border: 1px solid #00000029;
+    padding: 6px;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    padding-right: 32px;
+}
+.m-table tr th {
+    border: 1px solid #00000029;
+    padding: 6px;
+    color: #fff;
+    padding-right: 32px;
+    background-color: #8f5c1e;
+}
