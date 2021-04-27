@@ -1,24 +1,41 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+let bodyParser = require('body-parser')
 const port = process.env.PORT || 5000;
 
 app.set('views', 'view');
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+var data = require('./data/user.json');
+var {title} = require('./data/title.json') || "Vũ trụ TuMaFimaly - Server 3";
+var time = "00:00 27/04/2021";
+var lastUpdate = `Cập nhật lần cuối: ${time}`;
+var {note} = require('./data/note.json') || '';
 
 app.listen(port, () => {
     console.log(`Server listen on port ${port} ...`);
 });
 
 app.get('/', (req, res) => {
-    let data = require('./data/user.json');
-    let title = "Vũ trụ TuMaFimaly - Server 3";
-    let time = "00:00 27/04/2021";
-    let lastUpdate = `Cập nhật lần cuối: ${time}`;
-    let note = `Mỗi ngày mọi người làm nhiệm vụ để tăng điểm cống hiến (Kame, địa ngục, hành tinh ngục tù).\n
-                Mỗi tuần quyên góp quỹ chung 50k Ballz để mở skill vũ trụ.\n
-                Hàng ngày mọi người tập trung đầy đủ tham gia nhiệm vụ vũ trụ 21h
-    `;
+    
     res.render('index', {users: data, title: title, last: lastUpdate, note: note});
 });
+app.get('/edit', (req, res) => {
+    
+    res.render('edit', {users: data, title: title, last: lastUpdate, note: note});
+});
+
+app.post('/update', jsonParser, (req, res) => {
+    data =  req.body.users;
+    title = req.body.title;
+    note = req.body.note;
+    fs.writeFileSync('./data/user.json', JSON.stringify(data));
+    fs.writeFileSync('./data/title.json', JSON.stringify({title}));
+    fs.writeFileSync('./data/note.json', JSON.stringify({note}));
+    res.redirect('/');
+});
+
