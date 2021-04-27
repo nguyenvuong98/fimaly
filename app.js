@@ -1,13 +1,14 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const port = 5000 || process.env.PORT;
 
 app.set('views', 'view');
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
-app.listen(5000, () => {
-    console.log('Server listen on port 5000');
+app.listen(port, () => {
+    console.log(`Server listen on ${port} 5000`);
 });
 
 app.get('/', (req, res) => {
