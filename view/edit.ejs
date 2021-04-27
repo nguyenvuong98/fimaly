@@ -4,6 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Fimaly - SV3</title>
 </head>
 <body>
@@ -11,7 +12,8 @@
         <div style="text-align: center;">
             <p class="title" style="font-size: 23px;
             font-weight: 600;
-            margin-bottom: 39px;"><%= title %></p>
+            margin-bottom: 39px;"><input type="text" id="input-title" value="<%= title %>" style="width: 300px;
+    padding: 5px;"/></p>
 
             <div style="display: flex; justify-content: center;">
                 <div>
@@ -19,9 +21,8 @@
                     width: 618px;
                     text-align: left;
                     line-height: 27px;">
-                        <p>Thông báo: <i><%= note %></i></p>
+                        <p>Thông báo: <textarea id="input-note" rows="5" cols="50" style="line-height: 30px;"><%= note %></textarea></p>
                     </div>
-                    <p><%= last %></p>
                     <table class="m-table">
                         <thead>
                             <tr>
@@ -30,16 +31,47 @@
                                 <th>Chức vụ</th>
                                 <th>Điểm cống hiến</th>
                                 <th>Quyên góp</th>
+                                <th></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="my-tbody">
                             <% for(let i = 0; i < users.length; i++) { %>
-                                <tr>
+                                <tr id="<%= i+1 %>">
                                     <td style="text-align: center;"><%= i + 1 %></td>
-                                    <td><%= users[i].name %></td>
-                                    <td><%= users[i].position == 1 ? 'Thần hủy diêt' : users[i].position == 2 ? 'Thiên sứ': users[i].position == 3 ? 'Thần sáng tạo' : 'Thành viên'  %></td>
-                                    <td style="text-align: center;"><%= users[i].scorce %></td>
-                                    <td><%= users[i].ballz %> Ballz</td>
+                                    <td><span class="username"><%= users[i].name %></span></td>
+                                    <td>
+                                        <select class="position" value="<%= users[i].position %>" selected>
+                                            <% if(users[i].position == 1) { %>
+                                                <option value="1" selected>Thần hủy diệt</option>
+                                            <% } else { %>
+                                                <option value="1" >Thần hủy diệt</option>
+                                            <% } %>
+                                            <% if(users[i].position == 2) { %>
+                                                <option value="2" selected>Thiên sứt</option>
+                                            <% } else { %>
+                                                <option value="2" >Thiên sứ</option>
+                                            <% } %>
+                                            <% if(users[i].position == 3) { %>
+                                                <option value="3" selected>Thần sáng tạo</option>
+                                            <% } else { %>
+                                                <option value="3" >Thần sáng tạo</option>
+                                            <% } %>
+                                            <% if(users[i].position == 4) { %>
+                                                <option value="4" selected>Thành viên</option>
+                                            <% } else { %>
+                                                <option value="4" >Thành viên</option>
+                                            <% } %>
+                                        </select>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <input class="scorce" type="number"  value="<%= users[i].scorce %>"/>
+                                    </td>
+                                    <td>
+                                        <input class="ball" type="number"  value="<%= users[i].ballz %>"/>
+                                    </td>
+                                    <td>
+                                        <button onclick="deleteItem(<%= i+1 %>)">Xóa</button>
+                                    </td>
                                 </tr>
                             <% } %>
                         </tbody>
@@ -47,9 +79,103 @@
                 </div>
                 
             </div>
-            
+            <button id="btn" >Lưu</button>
+            <button id="btn-add" >Thêm mới</button>
         </div>
-
+        
     </div>
+    <script>
+        // let user = <%- JSON.stringify(users) %>;
+        // console.log('users ',user);
+        function check() {
+            let button = document.getElementById('btn');
+            button.addEventListener('click', () => {
+               let usernames = document.getElementsByClassName('username');
+               let positions = document.getElementsByClassName('position');
+               let scorces = document.getElementsByClassName('scorce');
+               let balls = document.getElementsByClassName('ball');
+               let users = [];
+               if (usernames && usernames.length) {
+                   for (let i = 0; i < usernames.length; i++) {
+                    let obj = {
+                           name: usernames[i].innerHTML || usernames[i].innerText || username.value,
+                           positions: positions[i].value,
+                           scorce: scorces[i].value,
+                           ballz: balls[i].value
+                       }
+                       users.push(obj);
+                   }
+               }
+               console.log('user ',users);
+            })
+            
+        }
+        function deleteItem(index) {
+            index = parseInt(index);
+            $("#"+index).remove();
+        }
+        $(document).ready(function(){
+            let usernames = document.getElementsByClassName('username');
+            let count = usernames.length;
+            $("#btn-add").click(function(){
+                console.log('click');
+                let item = `
+                    <tr id=${count + 1}>
+                        <td style="text-align: center;">${count + 1}</td>
+                        <td><input type="text" class="username" /></td>
+                        <td>
+                            <select class="position">
+                                <option value="1" >Thần hủy diệt</option>
+                                <option value="2" >Thiên sứ</option>
+                                <option value="3" >Thần sáng tạo</option>
+                                <option value="4" selected>Thành viên</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="scorce" /></td>
+                        <td><input type="number" class="ball" /></td>
+                        <td>
+                            <button onclick="deleteItem(${count + 1})">Xóa</button>   
+                        </td>
+                    </tr>
+                `;
+                count = count +1;
+                $(".my-tbody").append(item);
+            });
+            $('#btn').click(() => {
+                let usernames = document.getElementsByClassName('username');
+                let positions = document.getElementsByClassName('position');
+                let scorces = document.getElementsByClassName('scorce');
+                let balls = document.getElementsByClassName('ball');
+                let users = [];
+                if (usernames && usernames.length) {
+                    for (let i = 0; i < usernames.length; i++) {
+                        let obj = {
+                            name: usernames[i].innerHTML || usernames[i].innerText || usernames[i].value,
+                            positions: positions[i].value,
+                            scorce: scorces[i].value,
+                            ballz: balls[i].value
+                        }
+                        users.push(obj);
+                    }
+                }
+                //users = JSON.stringify(users);
+                let title = $('#input-title').val();
+                let note = $('#input-note').val();
+                let postData = {
+                    title,
+                    note,
+                    users: JSON.stringify(users)
+                };
+                console.log('data ', postData);
+                $.post("/update", postData, function(result){
+                    if (result.status) {
+                        window.location.href="/";
+                    }
+                });
+            });
+            
+        });
+        //window.onload = check;
+    </script>
 </body>
 </html>
