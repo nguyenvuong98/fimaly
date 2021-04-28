@@ -30,6 +30,7 @@
                                 <th>Tên nhân vật</th>
                                 <th>Chức vụ</th>
                                 <th>Điểm cống hiến</th>
+                                <th>Điểm cống hiến tuần</th>
                                 <th>Quyên góp</th>
                                 <th></th>
                             </tr>
@@ -37,26 +38,28 @@
                         <tbody class="my-tbody">
                             <% for(let i = 0; i < users.length; i++) { %>
                                 <tr id="<%= i+1 %>">
-                                    <td style="text-align: center;"><%= i + 1 %></td>
+                                    <td style="text-align: center;">
+                                        <input type="number" dtyle="width: 50px;" class="stt" value="<%= users[i].stt %>"/>
+                                    </td>
                                     <td><span class="username"><%= users[i].name %></span></td>
                                     <td>
                                         <select class="position" value="<%= users[i].position %>" selected>
-                                            <% if(users[i].position == 1) { %>
+                                            <% if(users[i].position == 1 || users[i].position == "1") { %>
                                                 <option value="1" selected>Thần hủy diệt</option>
                                             <% } else { %>
                                                 <option value="1" >Thần hủy diệt</option>
                                             <% } %>
-                                            <% if(users[i].position == 2) { %>
+                                            <% if(users[i].position == 2 || users[i].position == '2') { %>
                                                 <option value="2" selected>Thiên sứt</option>
                                             <% } else { %>
                                                 <option value="2" >Thiên sứ</option>
                                             <% } %>
-                                            <% if(users[i].position == 3) { %>
+                                            <% if(users[i].position == 3 || users[i].position == '3') { %>
                                                 <option value="3" selected>Thần sáng tạo</option>
                                             <% } else { %>
                                                 <option value="3" >Thần sáng tạo</option>
                                             <% } %>
-                                            <% if(users[i].position == 4) { %>
+                                            <% if(users[i].position == 4 || users[i].position == '4') { %>
                                                 <option value="4" selected>Thành viên</option>
                                             <% } else { %>
                                                 <option value="4" >Thành viên</option>
@@ -64,7 +67,10 @@
                                         </select>
                                     </td>
                                     <td style="text-align: center;">
-                                        <input class="scorce" type="number"  value="<%= users[i].scorce %>"/>
+                                        <input class="scorce" type="number"  value="<%= parseInt(users[i].scorce) %>"/>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <input class="weekScorce" type="number"  value="<%= parseInt(users[i].weekScore) %>"/>
                                     </td>
                                     <td>
                                         <input class="ball" type="number"  value="<%= users[i].ballz %>"/>
@@ -99,7 +105,7 @@
                    for (let i = 0; i < usernames.length; i++) {
                     let obj = {
                            name: usernames[i].innerHTML || usernames[i].innerText || username.value,
-                           positions: positions[i].value,
+                           position: positions[i].value,
                            scorce: scorces[i].value,
                            ballz: balls[i].value
                        }
@@ -121,7 +127,7 @@
                 console.log('click');
                 let item = `
                     <tr id=${count + 1}>
-                        <td style="text-align: center;">${count + 1}</td>
+                        <td style="text-align: center;"><input type="number" dtyle="width: 50px;" class="stt" value="${count + 1}"/></td>
                         <td><input type="text" class="username" /></td>
                         <td>
                             <select class="position">
@@ -131,7 +137,8 @@
                                 <option value="4" selected>Thành viên</option>
                             </select>
                         </td>
-                        <td><input type="number" class="scorce" /></td>
+                        <td style="text-align: center;"><input type="number" class="scorce" /></td>
+                        <td style="text-align: center;"><input type="number" class="weekScorce" /></td>
                         <td><input type="number" class="ball" /></td>
                         <td>
                             <button onclick="deleteItem(${count + 1})">Xóa</button>   
@@ -142,18 +149,22 @@
                 $(".my-tbody").append(item);
             });
             $('#btn').click(() => {
+                let stt = document.getElementsByClassName('stt');
                 let usernames = document.getElementsByClassName('username');
                 let positions = document.getElementsByClassName('position');
                 let scorces = document.getElementsByClassName('scorce');
+                let weekScorces = document.getElementsByClassName('weekScorce');
                 let balls = document.getElementsByClassName('ball');
                 let users = [];
                 if (usernames && usernames.length) {
                     for (let i = 0; i < usernames.length; i++) {
                         let obj = {
+                            stt: parseInt(stt[i].value),
                             name: usernames[i].innerHTML || usernames[i].innerText || usernames[i].value,
-                            positions: positions[i].value,
-                            scorce: scorces[i].value,
-                            ballz: balls[i].value
+                            position: parseInt(positions[i].value),
+                            scorce: parseInt(scorces[i].value),
+                            weekScore: parseInt(weekScorces[i].value),
+                            ballz: parseInt(balls[i].value)
                         }
                         users.push(obj);
                     }
@@ -166,7 +177,6 @@
                     note,
                     users: JSON.stringify(users)
                 };
-                console.log('data ', postData);
                 $.post("/update", postData, function(result){
                     if (result.status) {
                         window.location.href="/";
