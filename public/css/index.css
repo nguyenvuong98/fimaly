@@ -1,5 +1,6 @@
 .m-table {
     border-collapse: collapse;
+    width: 100%;
 }
 .m-table tr td {
     border: 1px solid #00000029;

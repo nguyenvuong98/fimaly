@@ -4,6 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Fimaly - SV3</title>
 </head>
@@ -12,16 +13,16 @@
         <div style="text-align: center;">
             <p class="title" style="font-size: 23px;
             font-weight: 600;
-            margin-bottom: 39px;"><input type="text" id="input-title" value="<%= title %>" style="width: 300px;
+            margin-bottom: 39px;"><input type="text" id="input-title"  style="width: 300px;
     padding: 5px;"/></p>
 
-            <div style="display: flex; justify-content: center;">
+            <div style="position: relative; left: 50%; transform: translateX(-50%);max-width: 1024px;">
                 <div>
                     <div style="    word-wrap: break-word;
                     width: 618px;
                     text-align: left;
                     line-height: 27px;">
-                        <p>Thông báo: <textarea id="input-note" rows="5" cols="50" style="line-height: 30px;"><%= note %></textarea></p>
+                        <p>Thông báo: <textarea id="input-note" rows="5" cols="50" style="line-height: 30px;"></textarea></p>
                     </div>
                     <table class="m-table">
                         <thead>
@@ -36,50 +37,6 @@
                             </tr>
                         </thead>
                         <tbody class="my-tbody">
-                            <% for(let i = 0; i < users.length; i++) { %>
-                                <tr id="<%= i+1 %>">
-                                    <td style="text-align: center;">
-                                        <input type="number" dtyle="width: 50px;" class="stt" value="<%= users[i].stt %>"/>
-                                    </td>
-                                    <td><span class="username"><%= users[i].name %></span></td>
-                                    <td>
-                                        <select class="position" value="<%= users[i].position %>" selected>
-                                            <% if(users[i].position == 1 || users[i].position == "1") { %>
-                                                <option value="1" selected>Thần hủy diệt</option>
-                                            <% } else { %>
-                                                <option value="1" >Thần hủy diệt</option>
-                                            <% } %>
-                                            <% if(users[i].position == 2 || users[i].position == '2') { %>
-                                                <option value="2" selected>Thiên sứt</option>
-                                            <% } else { %>
-                                                <option value="2" >Thiên sứ</option>
-                                            <% } %>
-                                            <% if(users[i].position == 3 || users[i].position == '3') { %>
-                                                <option value="3" selected>Thần sáng tạo</option>
-                                            <% } else { %>
-                                                <option value="3" >Thần sáng tạo</option>
-                                            <% } %>
-                                            <% if(users[i].position == 4 || users[i].position == '4') { %>
-                                                <option value="4" selected>Thành viên</option>
-                                            <% } else { %>
-                                                <option value="4" >Thành viên</option>
-                                            <% } %>
-                                        </select>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <input class="scorce" type="number"  value="<%= parseInt(users[i].scorce) %>"/>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <input class="weekScorce" type="number"  value="<%= parseInt(users[i].weekScore) %>"/>
-                                    </td>
-                                    <td>
-                                        <input class="ball" type="number"  value="<%= users[i].ballz %>"/>
-                                    </td>
-                                    <td>
-                                        <button onclick="deleteItem(<%= i+1 %>)">Xóa</button>
-                                    </td>
-                                </tr>
-                            <% } %>
                         </tbody>
                     </table>
                 </div>
@@ -91,8 +48,69 @@
         
     </div>
     <script>
-        // let user = <%- JSON.stringify(users) %>;
-        // console.log('users ',user);
+        const us_id = 1;
+        let handlerSelect = (position) => {
+            if (!position || parseInt(position.value) >= 4) {
+                return `
+                    <select class="position" value="4" selected>
+                        <option value="1" >Thần hủy diệt</option>
+                        <option value="2" >Thiên sứ</option>
+                        <option value="3" >Thần sáng tạo</option>
+                        <option value="4" selected>Thành viên</option>
+                    </select>
+                `
+            }
+
+            let str = `
+                <select class="position" value="${position.value}" selected>
+                        ${position.value == 1 ? '<option value="1" selected>Thần hủy diệt</option>' : '<option value="1" >Thần hủy diệt</option>'}
+                        ${position.value == 2 ? '<option value="2" selected>Thiên sứ</option>' : '<option value="2" >Thiên sứ</option>'}
+                        ${position.value == 3 ? '<option value="3" selected>Thần sáng tạo</option>' : '<option value="3" >Thần sáng tạo</option>'}
+                        <option value="4" >Thành viên</option>
+                </select>
+            `;
+            return str;
+        }
+        let init = () => {
+
+            $.get(`https://ballgateway.herokuapp.com/us/${us_id}`, (res => {
+                if (res.status && res.data) {
+                    let title = document.getElementById('input-title');
+                    title.value = res.data.title;
+                    let note = document.getElementById('input-note');
+                    note.value = res.data.note;
+
+                    if (res.data.members && res.data.members.length) {
+                        res.data.members.forEach((item, index) => {
+                            let element = `
+                            <tr id="${index +1}">
+                                    <td style="text-align: center;">
+                                        <input type="number" dtyle="width: 50px;" class="stt" value="${item.stt}"/>
+                                    </td>
+                                    <td><span class="username">${item.name}</span></td>
+                                    <td>
+                                        ${handlerSelect(item.position)}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <input class="score" type="number"  value="${item.score}"/>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <input class="weekScore" type="number"  value="${item.weekScore}"/>
+                                    </td>
+                                    <td>
+                                        <input class="ball" type="number"  value="${item.ballz}"/>
+                                    </td>
+                                    <td>
+                                        <button onclick="deleteItem(${index + 1})">Xóa</button>
+                                    </td>
+                                </tr>
+                            `;
+                            $('.my-tbody').append(element);
+                        });
+                    }
+                }
+            }));
+        };
         function check() {
             let button = document.getElementById('btn');
             button.addEventListener('click', () => {
@@ -121,6 +139,7 @@
             $("#"+index).remove();
         }
         $(document).ready(function(){
+            init();
             let usernames = document.getElementsByClassName('username');
             let count = usernames.length;
             $("#btn-add").click(function(){
@@ -137,8 +156,8 @@
                                 <option value="4" selected>Thành viên</option>
                             </select>
                         </td>
-                        <td style="text-align: center;"><input type="number" class="scorce" /></td>
-                        <td style="text-align: center;"><input type="number" class="weekScorce" /></td>
+                        <td style="text-align: center;"><input type="number" class="score" /></td>
+                        <td style="text-align: center;"><input type="number" class="weekScore" /></td>
                         <td><input type="number" class="ball" /></td>
                         <td>
                             <button onclick="deleteItem(${count + 1})">Xóa</button>   
@@ -152,8 +171,8 @@
                 let stt = document.getElementsByClassName('stt');
                 let usernames = document.getElementsByClassName('username');
                 let positions = document.getElementsByClassName('position');
-                let scorces = document.getElementsByClassName('scorce');
-                let weekScorces = document.getElementsByClassName('weekScorce');
+                let scores = document.getElementsByClassName('score');
+                let weekScores = document.getElementsByClassName('weekScore');
                 let balls = document.getElementsByClassName('ball');
                 let users = [];
                 if (usernames && usernames.length) {
@@ -161,23 +180,26 @@
                         let obj = {
                             stt: parseInt(stt[i].value),
                             name: usernames[i].innerHTML || usernames[i].innerText || usernames[i].value,
-                            position: parseInt(positions[i].value),
-                            scorce: parseInt(scorces[i].value),
-                            weekScore: parseInt(weekScorces[i].value),
+                            position: {
+                                value: parseInt(positions[i].value),
+                                name: parseInt(positions[i].value) == 1 ? 'Thần hủy diệt' : parseInt(positions[i].value) == 2 ? 'Thiên sứ' : parseInt(positions[i].value) == 3 ? 'Thần sáng tạo' : 'Thành viên'
+                            },
+                            score: parseInt(scores[i].value),
+                            weekScore: parseInt(weekScores[i].value),
                             ballz: parseInt(balls[i].value)
                         }
                         users.push(obj);
                     }
                 }
-                //users = JSON.stringify(users);
                 let title = $('#input-title').val();
                 let note = $('#input-note').val();
                 let postData = {
+                    us_id,
                     title,
                     note,
-                    users: JSON.stringify(users)
+                    members: JSON.stringify(users) 
                 };
-                $.post("/update", postData, function(result){
+                $.post("https://ballgateway.herokuapp.com/update", postData, function(result){
                     if (result.status) {
                         window.location.href="/";
                     }

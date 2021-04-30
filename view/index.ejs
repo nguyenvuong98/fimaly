@@ -4,24 +4,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Fimaly - SV3</title>
 </head>
 <body>
     <div class="container" style="padding-bottom: 50px;">
         <div style="text-align: center;">
-            <p class="title" style="font-size: 23px;
+            <p id="title" style="font-size: 23px;
             font-weight: 600;
-            margin-bottom: 39px;"><%= title %></p>
+            margin-bottom: 39px;"></p>
 
-            <div style="display: flex; justify-content: center;">
+            <div style="position: relative; left: 50%; transform: translateX(-50%);max-width: 1024px;">
                 <div>
                     <div style="    word-wrap: break-word;
                     width: 618px;
                     text-align: left;
                     line-height: 27px;">
-                        <p>Thông báo: <i><%= note %></i></p>
+                        <p>Thông báo: <i id="note"></i></p>
                     </div>
-                    <p><%= last %></p>
                     <table class="m-table">
                         <thead>
                             <tr>
@@ -33,17 +34,7 @@
                                 <th>Quyên góp</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <% for(let i = 0; i < users.length; i++) { %>
-                                <tr>
-                                    <td style="text-align: center;"><%= i + 1 %></td>
-                                    <td><%= users[i].name %></td>
-                                    <td><%= (users[i].position == 1 || users[i].position == '1')? 'Thần hủy diêt' : (users[i].position == 2 || users[i].position == '2')? 'Thiên sứ': (users[i].position == 3 || users[i].position == '3') ? 'Thần sáng tạo' : 'Thành viên'  %></td>
-                                    <td style="text-align: center;"><%= users[i].scorce %></td>
-                                    <td style="text-align: center;"><%= users[i].weekScore %></td>
-                                    <td><%= users[i].ballz %> Ballz</td>
-                                </tr>
-                            <% } %>
+                        <tbody id ="m-tbody">
                         </tbody>
                     </table>
                 </div>
@@ -53,5 +44,38 @@
         </div>
 
     </div>
+    <script>
+        let init = () => {
+            const us_id = 1;
+
+            $.get(`https://ballgateway.herokuapp.com/us/${us_id}`, (res => {
+                if (res.status && res.data) {
+                    let title = document.getElementById('title');
+                    title.innerText = res.data.title;
+                    let note = document.getElementById('note');
+                    note.innerText = res.data.note;
+
+                    if (res.data.members && res.data.members.length) {
+                        res.data.members.forEach((item, index) => {
+                            let element = `
+                                <tr>
+                                    <td style="text-align: center;">${index + 1}</td>
+                                    <td>${item.name}</td>
+                                    <td>${item.position ? item.position.name : ''}</td>
+                                    <td style="text-align: center;">${item.score}</td>
+                                    <td style="text-align: center;">${item.weekScore}</td>
+                                    <td>${item.ballz} Ballz</td>
+                                </tr>
+                            `;
+                            $('#m-tbody').append(element);
+                        });
+                    }
+                }
+            }));
+        };
+        $('document').ready(() => {
+            init();
+        })
+    </script>
 </body>
 </html>
