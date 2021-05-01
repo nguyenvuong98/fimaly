@@ -9,6 +9,13 @@
     border-right-color: transparent;
     padding-right: 32px;
 }
+.m-table tbody tr:nth-child(even) {
+    background-color: #e9e6e65c;
+}
+.m-table tbody tr:hover {
+    cursor: pointer;
+    background-color: #b4afaf5c;
+}
 .m-table tr th {
     border: 1px solid #00000029;
     padding: 6px;

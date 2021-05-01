@@ -41,6 +41,12 @@
                 </div>
                 
             </div>
+            <div style="margin: 10px;
+            margin-top: 30px;">
+                <span><b>Key: </b></span>
+                <input type="text" id="secret-key" placeholder="Mã bí mật">
+            </div>
+            <button id="btn-back" >Về trang chủ</button>
             <button id="btn" >Lưu</button>
             <button id="btn-add" >Thêm mới</button>
         </div>
@@ -192,19 +198,23 @@
                 }
                 let title = $('#input-title').val();
                 let note = $('#input-note').val();
+                let secret_key = $('#secret-key').val();
                 let postData = {
                     us_id,
                     title,
                     note,
+                    secret_key,
                     members: JSON.stringify(users) 
                 };
+                console.log('data', postData);
                 $.post("https://ballgateway.herokuapp.com/update", postData, function(result){
-                    if (result.status) {
-                        window.location.href="/";
-                    }
+                    alert(result.message);
                 });
             });
             
+        });
+        $('#btn-back').click(() => {
+            window.location.href = '/';
         });
         //window.onload = check;
     </script>
