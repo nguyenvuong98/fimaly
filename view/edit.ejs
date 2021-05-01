@@ -54,6 +54,7 @@
     </div>
     <script>
         const us_id = 1;
+        var count = 0;
         let handlerSelect = (position) => {
             if (!position || parseInt(position.value) >= 4) {
                 return `
@@ -86,6 +87,7 @@
                     note.value = res.data.note;
 
                     if (res.data.members && res.data.members.length) {
+                        count = res.data.members.length;
                         res.data.members.forEach((item, index) => {
                             let element = `
                             <tr id="${index +1}">
@@ -135,7 +137,6 @@
                        users.push(obj);
                    }
                }
-               console.log('user ',users);
             })
             
         }
@@ -146,9 +147,7 @@
         $(document).ready(function(){
             init();
             let usernames = document.getElementsByClassName('username');
-            let count = usernames.length;
             $("#btn-add").click(function(){
-                console.log('click');
                 let item = `
                     <tr id=${count + 1}>
                         <td style="text-align: center;"><input type="number" dtyle="width: 50px;" class="stt" value="${count + 1}"/></td>
@@ -206,7 +205,6 @@
                     secret_key,
                     members: JSON.stringify(users) 
                 };
-                console.log('data', postData);
                 $.post("https://ballgateway.herokuapp.com/update", postData, function(result){
                     alert(result.message);
                 });
