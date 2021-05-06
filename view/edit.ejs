@@ -16,7 +16,7 @@
             margin-bottom: 39px;"><input type="text" id="input-title"  style="width: 300px;
     padding: 5px;"/></p>
 
-            <div style="position: relative; left: 50%; transform: translateX(-50%);max-width: 1024px;">
+            <div style="position: relative; margin-left: 24px;">
                 <div>
                     <div style="    word-wrap: break-word;
                     text-align: left;
@@ -31,7 +31,8 @@
                                 <th>Chức vụ</th>
                                 <th>Điểm cống hiến</th>
                                 <th>Điểm cống hiến tuần</th>
-                                <th>Quyên góp</th>
+                                <th>Đóng góp tuần </th>
+                                <th>Tổng đóng góp</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -105,6 +106,9 @@
                                         <input class="weekScore" type="number"  value="${item.weekScore}"/>
                                     </td>
                                     <td>
+                                        <input class="weekBall" type="number"  value="${item.weekBallz}"/>
+                                    </td>
+                                    <td>
                                         <input class="ball" type="number"  value="${item.ballz}"/>
                                     </td>
                                     <td>
@@ -125,6 +129,7 @@
                let positions = document.getElementsByClassName('position');
                let scorces = document.getElementsByClassName('scorce');
                let balls = document.getElementsByClassName('ball');
+               let weekBalls = document.getElementsByClassName('weekBall');
                let users = [];
                if (usernames && usernames.length) {
                    for (let i = 0; i < usernames.length; i++) {
@@ -132,7 +137,8 @@
                            name: usernames[i].innerHTML || usernames[i].innerText || username.value,
                            position: positions[i].value,
                            scorce: scorces[i].value,
-                           ballz: balls[i].value
+                           ballz: balls[i].value,
+                           weekBallz: weekBalls[i].value
                        }
                        users.push(obj);
                    }
@@ -162,6 +168,7 @@
                         </td>
                         <td style="text-align: center;"><input type="number" class="score" value="0"/></td>
                         <td style="text-align: center;"><input type="number" class="weekScore" value="0"/></td>
+                        <td><input type="number" class="weekBall" value="0"/></td>
                         <td><input type="number" class="ball" value="0"/></td>
                         <td>
                             <button onclick="deleteItem(${count + 1})">Xóa</button>   
@@ -178,6 +185,7 @@
                 let scores = document.getElementsByClassName('score');
                 let weekScores = document.getElementsByClassName('weekScore');
                 let balls = document.getElementsByClassName('ball');
+                let weekBalls = document.getElementsByClassName('weekBall');
                 let users = [];
                 if (usernames && usernames.length) {
                     for (let i = 0; i < usernames.length; i++) {
@@ -190,7 +198,8 @@
                             },
                             score: parseInt(scores[i].value),
                             weekScore: parseInt(weekScores[i].value),
-                            ballz: parseInt(balls[i].value)
+                            ballz: parseInt(balls[i].value),
+                            weekBallz: parseInt(weekBalls[i].value)
                         }
                         users.push(obj);
                     }

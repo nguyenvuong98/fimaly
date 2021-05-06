@@ -8,6 +8,7 @@
     border-left-color: transparent;
     border-right-color: transparent;
     padding-right: 32px;
+    position: relative;
 }
 .m-table tbody tr:nth-child(even) {
     background-color: #e9e6e65c;
@@ -22,4 +23,33 @@
     color: #fff;
     padding-right: 32px;
     background-color: #8f5c1e;
+}
+.info-rank {
+    display: none;
+    padding: 20px;
+    position: absolute;
+    background: white;
+    top: 0;
+    right: -127%;
+    border-radius: 5px;
+    z-index: 999;
+    box-shadow: 1px 1px 3px #00000078;
+}
+#rank1:hover  #rank1-c {
+    display: inline-block;
+    transition: 1s;
+}
+#rank2:hover  #rank2-c {
+    display: inline-block;
+    transition: 1s;
+}
+#rank3:hover  #rank3-c {
+    display: inline-block;
+    transition: 1s;
+}
+.gift {
+    font-size: 15px;
+}
+.gift-c {
+    font-size: 12px;
 }

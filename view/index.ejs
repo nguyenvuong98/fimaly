@@ -20,7 +20,7 @@
             font-weight: 600;
             margin-bottom: 39px;"></p>
 
-            <div style="position: relative; left: 50%; transform: translateX(-50%);max-width: 1024px;">
+            <div style="position: relative; left: 50%; transform: translateX(-50%);max-width: 1109px;">
                 <div>
                     <div style="    word-wrap: break-word;
                     text-align: left;
@@ -35,7 +35,8 @@
                                 <th>Chức vụ</th>
                                 <th>Điểm cống hiến</th>
                                 <th>Điểm cống hiến tuần</th>
-                                <th>Quyên góp</th>
+                                <th>Đóng góp tuần </th>
+                                <th>Tổng đóng góp</th>
                             </tr>
                         </thead>
                         <tbody id ="m-tbody">
@@ -56,20 +57,35 @@
 
     </div>
     <script>
-        let selectImageRank = (index) => {
+        let selectImageRank = (index, item) => {
             if (index > 3) return '';
             
             let str = '';
 
             switch (index) {
                 case 1:
-                    str = `<image width = '20' height = "25" src="image/rank1-2.png" style="margin-left: 5px;" title="Rank 1">`;
+                    str = `<image width = '20' height = "25" src="image/rank1-2.png" style="margin-left: 5px;" title="Rank 1" > 
+                        <div  id="rank1-c" class="info-rank">
+                            <p class="font-weight-bold text-center">Hạng 1</p>
+                            <p>${item.name}  (${item.position.name})</p>
+                            <p class="gift">Phần thưởng: <span class="gift-c">chưa cập nhật</span><p>
+                        </div>`;
                     break;
                 case 2:
-                    str = `<image width = '20' height = "25" src="image/rank2-2.png" style="margin-left: 5px;" title="Rank 2">`;
+                    str = `<image width = '20' height = "25" src="image/rank2-2.png" style="margin-left: 5px;" title="Rank 2" >
+                            <div id="rank2-c" class="info-rank">
+                                <p class="font-weight-bold text-center">Hạng 2</p>
+                                <p>${item.name}  (${item.position.name})</p>
+                                <p class="gift">Phần thưởng: <span class="gift-c"><i>chưa cập nhật</i></span><p>
+                            </div>`;
                     break;
                 case 3:
-                    str = `<image width = '20' height = "25" src="image/rank3-2.png" style="margin-left: 5px;" title="Rank 3">`;
+                    str = `<image width = '20' height = "25" src="image/rank3-2.png" style="margin-left: 5px;" title="Rank 3" >
+                            <div id="rank3-c" class="info-rank">
+                                <p class="font-weight-bold text-center">Hạng 3</p>
+                                <p>${item.name}  (${item.position.name})</p>
+                                <p class="gift">Phần thưởng: <span class="gift-c">chưa cập nhật</span><p>
+                            </div>`;
                     break;
             }
 
@@ -105,10 +121,10 @@
                         res.data.members.forEach((item, index) => {
                             let element = `
                                 <tr>
-                                    <td style="text-align: center;">${index + 1}</td>
-                                    <td style="font-weight:600" >
+                                    <td style="text-align: center;" >${index + 1}</td>
+                                    <td style="font-weight:600" id="${index <= 2 ? 'rank'+ (index + 1) : ''}">
                                         ${item.name}
-                                        ${selectImageRank(index+1)}
+                                        ${selectImageRank(index+1, item)}
                                     </td>
                                     <td>${item.position ? item.position.name : ''}
                                         &nbsp&nbsp
@@ -116,6 +132,7 @@
                                     </td>
                                     <td style="text-align: center;">${item.score ? item.score : 0}</td>
                                     <td style="text-align: center;">${item.weekScore ? item.weekScore : 0}</td>
+                                    <td>${item.weekBallz ? item.weekBallz : 0} Ballz</td>
                                     <td>${item.ballz ? item.ballz : 0} Ballz</td>
                                 </tr>
                             `;
