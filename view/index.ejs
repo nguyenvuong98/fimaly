@@ -115,7 +115,7 @@
                     let title = document.getElementById('title');
                     title.innerText = res.data.title;
                     let note = document.getElementById('note');
-                    note.innerText = res.data.note;
+                    note.innerHTML = res.data.note;
 
                     if (res.data.members && res.data.members.length) {
                         res.data.members.forEach((item, index) => {
