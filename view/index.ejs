@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="shortcut icon" type="image/x-icon" href="image/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
@@ -27,14 +26,15 @@
                     line-height: 27px;">
                         <p>Thông báo: <i id="note"></i></p>
                     </div>
+                    <p style="text-align: left;">Lượt truy cập: <b id="view">0</b></p>
                     <table class="m-table">
                         <thead>
                             <tr>
                                 <th>STT</th>
                                 <th>Tên nhân vật</th>
                                 <th>Chức vụ</th>
-                                <th>Điểm cống hiến</th>
                                 <th>Điểm cống hiến tuần</th>
+                                <th>Điểm cống hiến</th>
                                 <th>Đóng góp tuần </th>
                                 <th>Tổng đóng góp</th>
                             </tr>
@@ -130,8 +130,8 @@
                                         &nbsp&nbsp
                                         ${selectImage(parseInt(item.position ? item.position.value :null))}
                                     </td>
-                                    <td style="text-align: center;">${item.score ? item.score : 0}</td>
                                     <td style="text-align: center;">${item.weekScore ? item.weekScore : 0}</td>
+                                    <td style="text-align: center;">${item.score ? item.score : 0}</td>
                                     <td>${item.weekBallz ? item.weekBallz : 0} Ballz</td>
                                     <td>${item.ballz ? item.ballz : 0} Ballz</td>
                                 </tr>
@@ -143,8 +143,19 @@
                 }
             }));
         };
+        const view = () => {
+            let name = "tumafimaly";
+            $.get(`https://kame-blog.herokuapp.com/view?name=${name}`, (res) => {
+                if (!res.status) {
+                    alert("Có lỗi xảy ra: ", res.message);
+                    return ;
+                }
+                $('#view').html(res.data.count);
+            });
+        }
         $('document').ready(() => {
             init();
+            view();
         })
     </script>
 </body>
