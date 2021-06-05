@@ -1,0 +1,117 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://ballgateway.herokuapp.com/socket.io/socket.io.min.js" ></script>
+    <link rel="stylesheet" type="text/css" href="css/chat.css">
+    <title>TuMaFimaly - Social</title>
+</head>
+<body style="overflow: hidden;">
+    <div class="container mt-4" style="height: 100%; position: relative;" id="container">
+        <div class='row' style="height: calc(100% - 100px);">
+            <div class="col-md-3">
+                <p class="font-weight-bold">Danh sách thành viên</p>
+                <div id="user"></div>
+            </div>
+            <div class="col-md-6" style="height: 100%;
+            position: relative;"> 
+                <div class="box">
+                    <div class="content-message" style="height: calc(100% - 47px);
+                    border: 1px solid #d6d6d6;
+                    box-shadow: 1px 1px 2px #e0dede;"></div>
+                    <div class="action-chat" style="height: 47px;
+                    line-height: 47px;
+                    margin-top: -2px;">
+                        <input class="input-chat" type="text" style="outline: none;
+                        border: 1px solid #b3ababd9;
+                        width: calc(100% - 51px);
+                        height: 100%;
+                        padding-left: 10px;
+                        border-radius: 5px 0 0 5px;
+                        float: left;">
+                        <button class="btn btn-primary" style="height: 47px;
+                        width: 51px;
+                        border-radius: 0 5px 5px 0;">Gửi</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <p class="font-weight-bold">Thông báo</p>
+                <div id="notification"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const baseURL = "https://ballgateway.herokuapp.com";
+        var io
+        let checkLogin = () => {
+            let info = localStorage.getItem('infor');
+
+            if (!info || info == 'null') {
+                let template = `
+                    <div class="popup-message">
+                        <input type="text" class="form-control" id="username">
+                        <input type="password" class="form-control" id="password">
+                        <button class="btn btn-danger" id="register" onclick="register()">Đăng ký</button><button class="btn btn-warning" id="login" onclick="login()">Đăng Nhập</button>    
+                    </div>
+                `;
+
+                $('#container').append(template);
+
+            } else {
+                // login
+                let data = JSON.parse(info);
+                $.post(baseURL + '/login', data, (res) => {
+                    if (res.status) {
+                        io = io(baseURL);
+                        io.emit('connect', {username: data.username});
+                        localStorage.setItem('infor', JSON.stringify(data));
+                    } else {
+                        localStorage.clear();
+                        checkLogin();
+                    }
+                });
+            }
+        }
+
+        let login = () => {
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let data = {username, password}
+            $.post(baseURL + '/login', data, (res) => {
+                    if (res.status) {
+                        io = io(baseURL);
+                        io.emit('connect', {username: data.username});
+                        localStorage.setItem('infor', JSON.stringify(data));
+                    } else {
+                        alert(res.message);
+                    }
+                });
+        }
+
+        let register = () => {
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let data = {username, password};
+
+            $.post(baseURL + '/register', data, (res) => {
+                    if (res.status) {
+                        io = io(baseURL);
+                        io.emit('connect', {username: data.username});
+                        localStorage.setItem('infor', JSON.stringify(data));
+                    } else {
+                        alert(res.message);
+                    }
+                });
+        }
+
+        $('document').ready(() => {
+            checkLogin();
+        })
+    </script>
+</body>
+</html>
