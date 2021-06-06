@@ -1,8 +1,82 @@
 .popup-message {
-    padding: 10px 2px;
-    box-shadow: 1px 1px 2px rgb(223, 219, 219);
+    background: white;
+    box-shadow: 1px 1px 2px rgb(223 219 219);
     position: absolute;
     top: 50%;
     left: 50%;
+    line-height: 48px;
+    padding: 47px;
     transform: translate(-50%, -50%);
+}
+.container-popup {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0, 0.5);
+    position: relative;
+    top: -100%; 
+    left: 0;
+}
+
+.status {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: gray;
+    display: inline-block;
+    margin-bottom: -3px;
+}
+.online {
+    background-color: #15db15;
+}
+.my-message {
+    background: #f1f1f1;
+    padding: 5px 10px;
+    border-radius: 3px;
+    box-shadow: 1px 1px 2px #808080b0;
+    max-width: 60%;
+}
+.message {
+    margin: 0;
+    word-wrap: break-word;
+}
+.title-message {
+    margin: 0;
+    font-size: 12px;
+}
+.another-message {
+    background: #12f3d438;
+    padding: 5px 10px;
+    border-radius: 3px;
+    box-shadow: 1px 1px 2px #808080b0;
+    max-width: 60%;
+    display: inline-block;
+}
+.message-notifi {
+    font-size: 13px;
+    margin: 0;
+}
+
+#notification {
+    overflow-y: auto;
+    height: calc(100% - 24px);
+}
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px grey; 
+    border-radius: 10px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: gray; 
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: grey; 
 }

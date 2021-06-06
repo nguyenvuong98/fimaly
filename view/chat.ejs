@@ -10,23 +10,24 @@
     <link rel="stylesheet" type="text/css" href="css/chat.css">
     <title>TuMaFimaly - Social</title>
 </head>
-<body style="overflow: hidden;">
+<body style="overflow: hidden;" id="body">
     <div class="container mt-4" style="height: 100%; position: relative;" id="container">
-        <div class='row' style="height: calc(100% - 100px);">
-            <div class="col-md-3">
+        <div class='row' style="height: calc(100% - 50px);">
+            <div class="col-md-3" style="height: 100%;">
                 <p class="font-weight-bold">Danh sách thành viên</p>
-                <div id="user"></div>
+                <div id="user" style="overflow-y: auto; height: 100%;"></div>
             </div>
             <div class="col-md-6" style="height: 100%;
             position: relative;"> 
                 <div class="box">
-                    <div class="content-message" style="height: calc(100% - 47px);
+                    <div id="content-message" class="content-message" style="height: calc(100% - 47px);
                     border: 1px solid #d6d6d6;
-                    box-shadow: 1px 1px 2px #e0dede;"></div>
+                    box-shadow: 1px 1px 2px #e0dede; padding: 5px; overflow-y: auto;
+                    background-color: #fff8f8;"></div>
                     <div class="action-chat" style="height: 47px;
                     line-height: 47px;
                     margin-top: -2px;">
-                        <input class="input-chat" type="text" style="outline: none;
+                        <input class="input-chat" id="input-chat" type="text" style="outline: none;
                         border: 1px solid #b3ababd9;
                         width: calc(100% - 51px);
                         height: 100%;
@@ -35,41 +36,50 @@
                         float: left;">
                         <button class="btn btn-primary" style="height: 47px;
                         width: 51px;
-                        border-radius: 0 5px 5px 0;">Gửi</button>
+                        border-radius: 0 5px 5px 0;" onclick="sendMessage()">Gửi</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" style="height: 100%;">
                 <p class="font-weight-bold">Thông báo</p>
-                <div id="notification"></div>
+                <div id="notification">
+                </div>
             </div>
         </div>
     </div>
     <script>
         const baseURL = "https://ballgateway.herokuapp.com";
-        var io
+        //const baseURL = "http://localhost:5000";
+        var info = localStorage.getItem('infor');
+        var isLogin = false;
         let checkLogin = () => {
-            let info = localStorage.getItem('infor');
+            
 
             if (!info || info == 'null') {
                 let template = `
-                    <div class="popup-message">
-                        <input type="text" class="form-control" id="username">
-                        <input type="password" class="form-control" id="password">
-                        <button class="btn btn-danger" id="register" onclick="register()">Đăng ký</button><button class="btn btn-warning" id="login" onclick="login()">Đăng Nhập</button>    
+                    <div class="container-popup" id="popup"> 
+                        <div class="popup-message">
+                            <h2>Welcome TuMaFimaly</h2>
+                            <input type="text" class="form-control mb-2" id="username" placeholder="Tên đăng nhập">
+                            <input type="password" class="form-control mb-2" id="password" placeholder="Tên đăng nhập">
+                            <button class="btn btn-danger mr-2" id="register" onclick="register()">Đăng ký</button><button class="btn btn-warning" id="login" onclick="login()">Đăng Nhập</button>    
+                        </div>
                     </div>
                 `;
 
-                $('#container').append(template);
+                $('#body').append(template);
 
             } else {
                 // login
                 let data = JSON.parse(info);
+                info = JSON.parse(info);
                 $.post(baseURL + '/login', data, (res) => {
                     if (res.status) {
-                        io = io(baseURL);
-                        io.emit('connect', {username: data.username});
+                        isLogin = true;
                         localStorage.setItem('infor', JSON.stringify(data));
+                        loadMessage();
+                        initSocket();
+                        $('#popup').hide();
                     } else {
                         localStorage.clear();
                         checkLogin();
@@ -84,9 +94,12 @@
             let data = {username, password}
             $.post(baseURL + '/login', data, (res) => {
                     if (res.status) {
-                        io = io(baseURL);
-                        io.emit('connect', {username: data.username});
+                        info = data;
+                        isLogin = true;
                         localStorage.setItem('infor', JSON.stringify(data));
+                        loadMessage();
+                        initSocket()
+                        $('#popup').hide();
                     } else {
                         alert(res.message);
                     }
@@ -101,17 +114,62 @@
             $.post(baseURL + '/register', data, (res) => {
                     if (res.status) {
                         io = io(baseURL);
-                        io.emit('connect', {username: data.username});
+                        isLogin = true;
+                        info = data;
                         localStorage.setItem('infor', JSON.stringify(data));
+                        loadMessage();
+                        initSocket();
+                        $('#popup').hide();
                     } else {
                         alert(res.message);
                     }
                 });
         }
+        let loadMessage = () => {
+            $.get(baseURL + '/messages', (res) => {
+                if (res.status && res.data) {
+                    let template = ''
+                    res.data.forEach(item  => {
+                        if (item.user_name == info.username) {
+                            template += `
+                                <div class="clearfix mb-2"> 
+                                    <div class="my-message float-right">
+                                        <p class="message">${item.content}</p>
+                                    </div>
+                                </div>
+                                
+                            `;
+                            } else {
+                                template += `
+                                    <div class="clearfix mb-2">
+                                        <div class="">
+                                            <p class="title-message"><i>${item.user_name}</i></p>
+                                            <div class="another-message">
+                                                <p class="message">${item.content}</p>
+                                            </div>
+                                        <div>
+                                    </div>
+                                `;
+                        }
+                    });
+                    $('#content-message').html('')
+                    $('#content-message').append(template);
+                    $('#content-message').animate({
+                        scrollTop: $("#content-message").prop("scrollHeight")
+                    }, 500);
+                }
+            });
+        };
 
         $('document').ready(() => {
             checkLogin();
+            $('#input-chat').keyup(event => {
+                if (event && event.which == 13) {
+                    sendMessage();
+                }
+            })
         })
     </script>
+     <script src="data/socket.js"></script>
 </body>
 </html>
